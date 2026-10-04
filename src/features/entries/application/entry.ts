@@ -4,3 +4,7 @@ export interface Entry {
   readonly points: number;
   readonly comments: number;
 }
+
+export interface CountedEntry extends Entry {
+  readonly wordCount: number;
+}
