@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { CountedEntry } from "@/features/entries/application/entry";
+import { EntryFilter } from "@/features/entries/application/entry-filter";
 import { filterEntries } from "@/features/entries/application/filter-entries";
 
 const shortEntry: CountedEntry = {
@@ -51,25 +52,25 @@ describe("filterEntries", () => {
       wordCount: 6, // 6 words
     };
 
-    expect(filterEntries([entry], "long-title")).toEqual([entry]);
-    expect(filterEntries([entry], "short-title")).toEqual([]);
+    expect(filterEntries([entry], EntryFilter.LongTitle)).toEqual([entry]);
+    expect(filterEntries([entry], EntryFilter.ShortTitle)).toEqual([]);
   });
 
   it("selects titles with more than five words", () => {
-    expect(filterEntries(entries, "long-title")).toEqual([
+    expect(filterEntries(entries, EntryFilter.LongTitle)).toEqual([
       longEntry,
       anotherLongEntry,
     ]);
   });
 
   it("selects titles with five words or fewer", () => {
-    expect(filterEntries(entries, "short-title")).toEqual([
+    expect(filterEntries(entries, EntryFilter.ShortTitle)).toEqual([
       shortEntry,
       fiveWordEntry,
     ]);
   });
 
-  it.each(["long-title", "short-title"] as const)(
+  it.each([EntryFilter.LongTitle, EntryFilter.ShortTitle])(
     "returns no entries for an empty list with %s",
     (filter) => {
       expect(filterEntries([], filter)).toEqual([]);
@@ -77,8 +78,8 @@ describe("filterEntries", () => {
   );
 
   it("returns no entries when no titles match", () => {
-    expect(filterEntries([shortEntry], "long-title")).toEqual([]);
-    expect(filterEntries([longEntry], "short-title")).toEqual([]);
+    expect(filterEntries([shortEntry], EntryFilter.LongTitle)).toEqual([]);
+    expect(filterEntries([longEntry], EntryFilter.ShortTitle)).toEqual([]);
   });
 
   it("does not modify the original entries", () => {
@@ -87,8 +88,8 @@ describe("filterEntries", () => {
       entries.map((entry) => Object.freeze({ ...entry })),
     );
 
-    filterEntries(frozenEntries, "long-title");
-    filterEntries(frozenEntries, "short-title");
+    filterEntries(frozenEntries, EntryFilter.LongTitle);
+    filterEntries(frozenEntries, EntryFilter.ShortTitle);
 
     expect(frozenEntries).toEqual(original);
   });

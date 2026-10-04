@@ -1,13 +1,12 @@
 import type { CountedEntry } from "./entry";
-
-export type EntryFilter = "long-title" | "short-title";
+import { EntryFilter } from "./entry-filter";
 
 export function filterEntries(
   entries: readonly CountedEntry[],
   filter: EntryFilter,
 ): CountedEntry[] {
   return entries.filter((entry) => {
-    const isLongFilter = filter === "long-title";
+    const isLongFilter = filter === EntryFilter.LongTitle;
     return isLongFilter ? entry.wordCount > 5 : entry.wordCount <= 5;
   });
 }
