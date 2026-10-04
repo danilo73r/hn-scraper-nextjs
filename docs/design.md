@@ -15,6 +15,7 @@ The architecture is simple but can evolve based on measured performance and iden
 The worker performs a scraping operation: it downloads the Hacker News page and builds a snapshot of the first 30 entries. Snapshots are cached in memory, not stored in PostgreSQL. They are replaced atomically.
 
 - The worker fetches data from a fixed HTTPS URL with redirects blocked and a timeout.
+- The html parser will normalize missing points and comments to 0.
 - Cheerio parses the HTML and validates the first 30 entries.
 - The worker respects the 30s crawl delay, it waits at least 60s between scraping attempts.
     - https://news.ycombinator.com/robots.txt
