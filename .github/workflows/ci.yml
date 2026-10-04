@@ -44,7 +44,10 @@ jobs:
       - name: Check types
         run: npm run typecheck
 
-      # Add unit and integration test steps here.
+      - name: Unit tests
+        run: npm run test:unit
+
+      # Add integration tests when their first real tests exist.
       # Live Hacker News tests and k6 run separately.
 
       - name: Build
