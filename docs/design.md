@@ -12,65 +12,86 @@ The architecture is simple but can evolve based on measured performance and iden
 
 ## Scraping
 
-- Fetch from a fixed HTTPS URL with redirects blocked and a timeout.
-- Parse with Cheerio and validate the first 30 entries.
-- Respect the robots.txt delay of 30s using 60s by default.
+The worker performs a scraping operation: it downloads the Hacker News page and builds a snapshot of the first 30 entries. Snapshots are cached in memory, not stored in PostgreSQL. They are replaced atomically.
+
+- The worker fetches data from a fixed HTTPS URL with redirects blocked and a timeout.
+- Cheerio parses the HTML and validates the first 30 entries.
+- The worker respects the 30s crawl delay, it waits at least 60s between scraping attempts.
     - https://news.ycombinator.com/robots.txt
-- Run at startup, and when an expired cache is requested.
+- The number of words is computed ahead of time and stored in a field.
+- Word counts are reused using a dictionary limited to current titles.
+- The worker scrapes once at startup.
 
 ### Cache and Concurrency
 
-- Cache snapshots in memory and replace them atomically.
-- Compute the number of words (ahead of time) as a field.
-- Reuse word counts in a dictionary limited to current titles.
-- Concurrent requests trigger a single cache refresh (one scraping).
-- Return policy for requests:
-    - A. Cache under 60s old: return cached data. 
-    - B. Cache between 60s and 10min old: return cached data and start scraping. A successful refresh resets the cache age.
-    - C. Cache over 10min old or missing: wait for scraping, within the request timeout.
-    - Both time limits (60s and 10min) are samples and can be configurable.
+- Concurrent requests can only trigger a single scraping operation.
+- Cache expiration and return policy for requests:
+    - A. Cache under 60s old:
+        - Return cached data. 
+    - B. Cache between 60s and 10min old:
+        - Cached data is returned, and a scraping operation starts.
+        - On success, the snapshot is replaced and the cache age resets.
+    - C. Cache over 10min old or empty:
+        - The request waits for the scraping operation to finish.
+        - The wait is limited by the request timeout.
+- Both time limits (60s and 10min) are configurable defaults.
 
 
 ### Scraping Error Handling
 
-- Set timeouts for scraping and API requests.
-- Inside cache error state, track:
-    - scraping timeouts
-    - external errors
-    - exhausted retries
-    - parsing errors
-- Use that state to return an error message to the user.
-- Clear the error state only after a successful refresh.
+- Scraping and API requests have seprate timeouts.
+- The cache tracks errors in its state:
+    - Scraping timeouts
+    - External service errors
+    - Exhausted retries
+    - Parsing errors
+- This state includes an error code to identify the failure.
+- The error state is cleared only after a successful refresh.
 
 
 ## Usage Data
 
-- Store request timestamps and applied filters in PostgreSQL. Also include:
-    - result count: the number of entries returned
-    - delayed: whether the request waited for scraping
-    - outcome: the request result: success or failure
-    - error code: failure code, it is null on success
-- Await persistence before returning a successful response.
-- Background writes could reduce latency using an in-memory queue (data loss risk) or a durable queue (preserving data).
+- Usage data is stored in PostgreSQL, including:
+    - Timestamp: Request timestamp
+    - Filter: The code of the applied filter
+    - Result count: the number of entries returned.
+    - Delayed: whether the request waited for scraping.
+    - Outcome: success or failure.
+    - Error code: the failure code, or null on success.
+- Persistence completes before a successful response is returned.
+- Background writes could reduce latency using an in-memory queue (data loss risk) or a durable queue (persistent storage).
 
 
 ## Filtering
 
-- Use titles as a second sorting criterion.
+- Both filters use the same snapshot.
+- Use titles as a secondary sorting criterion.
+- Descending order by default.
 
 ## Testing
 
-- Unit tests: word counting, filtering, sorting, HTML parsing, and scraping rules with simulated responses and time.
-- Integration tests: API behavior, cache refreshes, concurrent requests, and PostgreSQL usage records. 
-- Integration test against Hacker news: verify extraction of the fields of 30 entries. If this test is added to a CI pipeline, you should consider that it can fail because it is an external service.
+- Unit tests: 
+    - Word counting
+    - Filtering and sorting
+    - HTML parsing
+    - Scraping rules
+- Integration tests:
+    - API behavior
+    - Cache refreshes
+    - Concurrent requests
+    - Usage records in PostgreSQL
+- Live integration test against Hacker news: 
+    - Verifies extraction of the fields from the first 30 entries.
+    - This test depends on an external service, so consider carefully before adding it to CI.
+
 
 ## Performance
 
-- Use k6 to measure response latency and requests per second.
-- Test for each case of the policy (A, B, C) and timeouts.
-- Measure operation timings to identify bottlenecks:
-    - download
-    - parsing
-    - filtering
-    - usage persistence
-- Run against the production build.
+- k6 measures response latency and requests per second.
+- Tests cover cache policies A, B, and C, including timeouts.
+- Operation timings help identify bottlenecks:
+    - Downloading
+    - Parsing
+    - Filtering
+    - Usage persistence
+- Performance tests run against the production build.
