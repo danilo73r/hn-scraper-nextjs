@@ -5,7 +5,6 @@
 The architecture is simple but can evolve based on measured performance and identified bottlenecks.
 
 - Next.js application, organized by feature with vertical slices.
-- API, application, and infrastructure responsibilities are separated within the single project.
 - Scraping, caching, filtering, and persistence have separated responsibilities.
 - A background worker (in the same API process) will be used to scrape data from Hacker News.
 
