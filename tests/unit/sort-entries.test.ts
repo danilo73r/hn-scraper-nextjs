@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import type { CountedEntry } from "@/features/entries/application/entry";
-import { EntryFilter } from "@/features/entries/application/entry-filter";
-import { sortEntries } from "@/features/entries/application/sort-entries";
+import type { CountedEntry } from "@/features/hacker-news/get-entries/entry";
+import { EntryFilter } from "@/features/hacker-news/get-entries/entry-filter";
+import { sortEntries } from "@/features/hacker-news/get-entries/sort-entries";
 
 const longEntry: CountedEntry = {
   rank: 1,

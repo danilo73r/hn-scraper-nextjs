@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { countWords } from "@/features/entries/application/count-words";
+import { countWords } from "@/features/hacker-news/get-entries/count-words";
 
 describe("countWords", () => {
   it("ignores standalone symbols and keeps hyphenated words together", () => {
