@@ -75,3 +75,5 @@ Local development and tests use PostgreSQL 18. With Docker running, copy `.env.e
 `npm run db:migration:create -- name` creates a SQL template. Edit it, then apply pending migrations with `npm run db:migrate`.
 
 `npm run test:integration` uses disposable PostgreSQL containers and runs in CI. `npm run db:down` stops the local database and preserves its volume.
+
+`UsageRepository.save(event)` waits for persistence and propagates database errors. Callers must await it before returning a successful response.
