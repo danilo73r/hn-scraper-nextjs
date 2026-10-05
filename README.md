@@ -28,6 +28,7 @@ A Next.js/Typescript app that scrapes the first 30 entries from Hacker News, fil
 - Filtering: precomputed word counts, the five-word limit, and empty lists.
 - Sorting: descending metrics, titles A–Z ignoring case, and stable ties.
 - HTML parsing using saved fixtures: field extraction, missing metrics, comment link positions, and invalid HTML or values.
+- Page fetching: fixed URL, blocked redirects, HTTP/network errors, and timeouts while waiting for headers or the body. Tested with mocked responses and fake timers.
 
 ```bash
 npm run test:unit
