@@ -52,7 +52,7 @@ The worker performs a scraping operation: it downloads the Hacker News page and 
     - Collection (fetch and parse) makes up to 3 attempts, waiting 60s between retries.
     - Network failures, download timeouts, and HTTP 500, 502, 503, 504 trigger retries.
     - Parsing errors and other HTTP errors end collection without retries, except HTTP 429.
-    - HTTP 429 wait for `Retry-After`, with a minimum of 60s, or 5min if missing or invalid.
+    - HTTP 429 waits for `Retry-After`, bounded between 60s and 1h, or 5min if missing or invalid. Values above 1h are capped, so retries may occur before the server's requested time.
     - Different error types share the same attempt limit.
 
 

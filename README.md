@@ -29,6 +29,7 @@ A Next.js/Typescript app that scrapes the first 30 entries from Hacker News, fil
 - Sorting: descending metrics, titles A–Z ignoring case, and stable ties.
 - HTML parsing using saved fixtures: field extraction, missing metrics, comment link positions, and invalid HTML or values.
 - Page fetching: fixed URL, blocked redirects, HTTP/network errors, and timeouts while waiting for headers or the body. Tested with mocked responses and fake timers.
+- Fetch retries: three total attempts, retry delays, mixed failures, and HTTP 429 `Retry-After`. Tested with mocked responses and fake timers.
 
 ```bash
 npm run test:unit

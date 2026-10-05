@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { fetchPage } from "@/features/hacker-news/get-entries/scraping/fetch-page";
+import { fetchPage } from "@/features/hacker-news/get-entries/scraping/collect/fetch-page";
 import { ScrapingRequestErrorCode } from "@/features/hacker-news/get-entries/scraping/scraping-request-error";
 
 afterEach(() => {

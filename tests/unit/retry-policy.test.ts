@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getRetryDelayMs } from "@/features/hacker-news/get-entries/scraping/retry-policy";
+import { getRetryDelayMs } from "@/features/hacker-news/get-entries/scraping/collect/retry-policy";
 import {
   ScrapingRequestError,
   ScrapingRequestErrorCode,
@@ -37,6 +37,11 @@ describe("getRetryDelayMs", () => {
 
   it.each([
     { header: "120", expected: 120_000 },
+    { header: "300", expected: 300_000 },
+    { header: "301", expected: 301_000 },
+    { header: "3600", expected: 3_600_000 },
+    { header: "7200", expected: 3_600_000 },
+    { header: "2147484", expected: 3_600_000 },
     { header: "10", expected: 60_000 },
     { header: "0", expected: 60_000 },
     { header: undefined, expected: 300_000 },
@@ -62,6 +67,16 @@ describe("getRetryDelayMs", () => {
       { status: 429, retryAfter },
     );
     expect(getRetryDelayMs(error, now)).toBe(120_000);
+  });
+
+  it("limits a future Retry-After date to one hour", () => {
+    const now = Date.UTC(2026, 9, 5);
+    const error = new ScrapingRequestError(
+      ScrapingRequestErrorCode.Http,
+      "Limited",
+      { status: 429, retryAfter: new Date(now + 7_200_000).toUTCString() },
+    );
+    expect(getRetryDelayMs(error, now)).toBe(3_600_000);
   });
 
   it.each([

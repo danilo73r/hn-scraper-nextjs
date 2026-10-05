@@ -1,7 +1,7 @@
 import {
   ScrapingRequestError,
   ScrapingRequestErrorCode,
-} from "./scraping-request-error";
+} from "../scraping-request-error";
 
 const hackerNewsUrl = "https://news.ycombinator.com/";
 const fetchTimeoutMs = 10_000;
