@@ -43,6 +43,9 @@ const entries: readonly CountedEntry[] = [
 ];
 
 describe("filterEntries", () => {
+  it("keeps all entries in the original order for all", () => {
+    expect(filterEntries(entries, EntryFilter.All)).toEqual(entries);
+  });
   it("uses the supplied word count instead of calculating it from title", () => {
     const entry: CountedEntry = {
       rank: 1,

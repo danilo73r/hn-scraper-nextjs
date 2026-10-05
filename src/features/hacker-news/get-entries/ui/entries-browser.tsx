@@ -10,7 +10,7 @@ export function EntriesBrowser({
 }: {
   entries?: readonly Entry[];
 }) {
-  const [filter, setFilter] = useState<EntryFilter>(EntryFilter.LongTitle);
+  const [filter, setFilter] = useState<EntryFilter>(EntryFilter.All);
 
   return (
     <section
@@ -22,6 +22,17 @@ export function EntriesBrowser({
         role="group"
         aria-label="Title length"
       >
+        <button
+          type="button"
+          className="filter-button"
+          aria-pressed={filter === EntryFilter.All}
+          onClick={() => setFilter(EntryFilter.All)}
+        >
+          <span className="filter-label block text-base">All</span>
+          <small className="filter-description block text-xs text-muted">
+            All stories · original order
+          </small>
+        </button>
         <button
           type="button"
           className="filter-button"

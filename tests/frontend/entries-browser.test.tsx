@@ -5,26 +5,33 @@ import { EntriesBrowser } from "@/features/hacker-news/get-entries/ui/entries-br
 import { EntriesList } from "@/features/hacker-news/get-entries/ui/entries-list";
 
 describe("EntriesBrowser", () => {
-  it("selects long titles initially and switches filters", async () => {
+  it("selects all initially and switches filters", async () => {
     const user = userEvent.setup();
     render(<EntriesBrowser />);
 
+    const all = screen.getByRole("button", { name: /^all/i });
     const longTitles = screen.getByRole("button", { name: /long titles/i });
     const shortTitles = screen.getByRole("button", { name: /short titles/i });
-    expect(longTitles).toHaveAttribute("aria-pressed", "true");
+    expect(all).toHaveAttribute("aria-pressed", "true");
+    expect(longTitles).toHaveAttribute("aria-pressed", "false");
 
     await user.click(shortTitles);
     expect(shortTitles).toHaveAttribute("aria-pressed", "true");
+    expect(all).toHaveAttribute("aria-pressed", "false");
     expect(longTitles).toHaveAttribute("aria-pressed", "false");
 
     await user.click(longTitles);
     expect(longTitles).toHaveAttribute("aria-pressed", "true");
+    await user.click(all);
+    expect(all).toHaveAttribute("aria-pressed", "true");
+    expect(longTitles).toHaveAttribute("aria-pressed", "false");
   });
 
   it("supports filter selection with the keyboard", async () => {
     const user = userEvent.setup();
     render(<EntriesBrowser />);
 
+    await user.tab();
     await user.tab();
     await user.tab();
     const shortTitles = screen.getByRole("button", { name: /short titles/i });

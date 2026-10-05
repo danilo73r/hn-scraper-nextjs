@@ -1,10 +1,10 @@
 # Entries API
 
-`GET /api/entries?filter=long-title` or `filter=short-title` returns `{ "entries": [...] }`. Each entry contains `rank`, `title`, `points` and `comments`; word counts stay internal. Responses use `Cache-Control: no-store`.
+`GET /api/entries?filter=all|long-title|short-title` returns `{ "entries": [...] }`. `all` preserves the original order; the other filters sort by their metric. Each entry contains `rank`, `title`, `points` and `comments`; word counts stay internal. Responses use `Cache-Control: no-store`.
 
 | Status | Meaning |
 | --- | --- |
-| 200 | Sorted entries, including an empty list. |
+| 200 | Entries in the selected order, including an empty list. |
 | 400 | Missing, invalid or repeated filter; no usage record is written. |
 | 502 | Upstream HTTP, network or parsing failure. |
 | 503 | Usage persistence failed; no successful response is returned. |

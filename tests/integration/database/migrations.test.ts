@@ -59,7 +59,7 @@ describe("usage migration", () => {
       VALUES (NOW(), 'long-title', 5, false, 'success')
     `);
     expect(await migrate()).toHaveLength(0);
-    expect((await pool.query("SELECT * FROM pgmigrations")).rowCount).toBe(1);
+    expect((await pool.query("SELECT * FROM pgmigrations")).rowCount).toBe(2);
     expect((await pool.query("SELECT * FROM usage_events")).rowCount).toBe(1);
   });
 
@@ -119,6 +119,8 @@ describe("usage migration", () => {
   });
 
   it("can roll back and reapply the migration on a disposable database", async () => {
+    // Undo the filter extension before removing the table.
+    await migrate("down");
     await migrate("down");
     expect(
       (await pool.query("SELECT to_regclass('public.usage_events') AS name"))
