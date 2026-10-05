@@ -50,6 +50,11 @@ The worker shares one active promise across callers, so only one collection runs
 npm run test:unit
 ```
 
+### Live test
+
+`npm run test:live` checks the first 30 Hacker News entries. Requires network access; excluded from CI.
+
+
 ## Performance
 
 ### Parsing benchmark
