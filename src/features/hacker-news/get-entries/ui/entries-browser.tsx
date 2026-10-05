@@ -1,16 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { Entry } from "../entry";
 import { EntryFilter } from "../entry-filter";
 import { EntriesList } from "./entries-list";
+import { useEntries } from "./use-entries";
 
-export function EntriesBrowser({
-  entries = [],
-}: {
-  entries?: readonly Entry[];
-}) {
-  const [filter, setFilter] = useState<EntryFilter>(EntryFilter.All);
+export function EntriesBrowser() {
+  const { filter, selectFilter, state, retry } = useEntries();
   const [isSticky, setIsSticky] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
@@ -43,7 +39,7 @@ export function EntriesBrowser({
           type="button"
           className="filter-button"
           aria-pressed={filter === EntryFilter.All}
-          onClick={() => setFilter(EntryFilter.All)}
+          onClick={() => selectFilter(EntryFilter.All)}
         >
           <span className="filter-label">All</span>
           <small className="filter-description text-xs text-muted">
@@ -54,7 +50,7 @@ export function EntriesBrowser({
           type="button"
           className="filter-button"
           aria-pressed={filter === EntryFilter.LongTitle}
-          onClick={() => setFilter(EntryFilter.LongTitle)}
+          onClick={() => selectFilter(EntryFilter.LongTitle)}
         >
           <span className="filter-label">Long titles</span>
           <small className="filter-description text-xs text-muted">
@@ -65,7 +61,7 @@ export function EntriesBrowser({
           type="button"
           className="filter-button"
           aria-pressed={filter === EntryFilter.ShortTitle}
-          onClick={() => setFilter(EntryFilter.ShortTitle)}
+          onClick={() => selectFilter(EntryFilter.ShortTitle)}
         >
           <span className="filter-label">Short titles</span>
           <small className="filter-description text-xs text-muted">
@@ -75,9 +71,35 @@ export function EntriesBrowser({
       </div>
       <div className="stories-heading flex items-center justify-between">
         <h2 className="stories-heading-title text-sm">Stories</h2>
-        <span className="text-xs text-muted">{entries.length} entries</span>
+        {state.status === "ready" && (
+          <span className="text-xs text-muted">
+            {state.entries.length}{" "}
+            {state.entries.length === 1 ? "entry" : "entries"}
+          </span>
+        )}
       </div>
-      <EntriesList entries={entries} />
+      <div aria-busy={state.status === "loading"}>
+        {state.status === "loading" && (
+          <p role="status" className="empty-stories text-center text-muted">
+            Loading stories…
+          </p>
+        )}
+        {state.status === "error" && (
+          <div className="empty-stories text-center">
+            <p role="alert" className="text-muted">
+              Could not load stories.
+            </p>
+            <button
+              type="button"
+              className="filter-button mt-4"
+              onClick={retry}
+            >
+              Try again
+            </button>
+          </div>
+        )}
+        {state.status === "ready" && <EntriesList entries={state.entries} />}
+      </div>
     </section>
   );
 }
