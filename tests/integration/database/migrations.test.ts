@@ -1,26 +1,13 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { fileURLToPath } from "node:url";
-import { runner } from "node-pg-migrate";
 import type { Pool } from "pg";
 import type { StartedPostgreSqlContainer } from "@testcontainers/postgresql";
 import { createDatabasePool } from "@/infrastructure/database/client";
-import { startTestPostgres } from "../../setup/postgres";
-
-const migrationsDir = fileURLToPath(
-  new URL("../../../src/infrastructure/database/migrations", import.meta.url),
-);
+import { migrateTestPostgres, startTestPostgres } from "../../setup/postgres";
 let container: StartedPostgreSqlContainer;
 let pool: Pool;
 
 function migrate(direction: "up" | "down" = "up") {
-  return runner({
-    databaseUrl: container.getConnectionUri(),
-    dir: migrationsDir,
-    direction,
-    migrationsTable: "pgmigrations",
-    singleTransaction: true,
-    log: () => {},
-  });
+  return migrateTestPostgres(container.getConnectionUri(), direction);
 }
 
 beforeAll(async () => {
