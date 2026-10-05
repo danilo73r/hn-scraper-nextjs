@@ -58,6 +58,8 @@ node scripts/parser/named-character-references.mjs
 
 `SnapshotCache` stores immutable entries and collection time, reusing word counts for current titles. Failed updates preserve the snapshot; filtering happens on query.
 
+`CachedEntries` returns fresh cache, refreshes stale cache in background, and waits for missing or expired cache. Ages come from `.env.local`.
+
 `CollectorWorker` is a class in the API process, not a separate Node.js thread; downloads and waits are asynchronous.
 
 The worker shares one active promise across callers, so only one collection runs at a time within the Node.js process. Cooldown is the mandatory pause between collection operations: 60 seconds after success, or the error's retry delay after failure (up to 1 hour for HTTP 429). Cooldown and retry intervals are fixed independently of cache settings. `nextAllowedAt` stores when the next collection may start.
