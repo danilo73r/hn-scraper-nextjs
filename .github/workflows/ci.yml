@@ -47,7 +47,7 @@ jobs:
       - name: Unit tests
         run: npm run test:unit
 
-      - name: PostgreSQL integration tests
+      - name: Integration tests
         run: npm run test:integration
 
       # Live Hacker News tests and k6 run separately.

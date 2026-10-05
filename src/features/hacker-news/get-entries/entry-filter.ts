@@ -5,6 +5,10 @@ export const EntryFilter = {
 
 export type EntryFilter = (typeof EntryFilter)[keyof typeof EntryFilter];
 
+export function isEntryFilter(value: unknown): value is EntryFilter {
+  return value === EntryFilter.LongTitle || value === EntryFilter.ShortTitle;
+}
+
 export function isLongFilter(filter: EntryFilter): boolean {
   return filter === EntryFilter.LongTitle;
 }
