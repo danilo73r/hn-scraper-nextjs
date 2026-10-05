@@ -1,13 +1,22 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { EntriesBrowser } from "@/features/hacker-news/get-entries/ui/entries-browser";
 import { EntriesList } from "@/features/hacker-news/get-entries/ui/entries-list";
+
+beforeEach(() => {
+  vi.stubGlobal(
+    "fetch",
+    vi.fn().mockImplementation(async () => Response.json({ entries: [] })),
+  );
+});
+afterEach(() => vi.unstubAllGlobals());
 
 describe("EntriesBrowser", () => {
   it("selects all initially and switches filters", async () => {
     const user = userEvent.setup();
     render(<EntriesBrowser />);
+    await screen.findByText("No stories to show yet.");
 
     const all = screen.getByRole("button", { name: /^all/i });
     const longTitles = screen.getByRole("button", { name: /long titles/i });
@@ -30,6 +39,7 @@ describe("EntriesBrowser", () => {
   it("supports filter selection with the keyboard", async () => {
     const user = userEvent.setup();
     render(<EntriesBrowser />);
+    await screen.findByText("No stories to show yet.");
 
     await user.tab();
     await user.tab();

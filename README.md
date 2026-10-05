@@ -43,7 +43,7 @@ npm run test:unit
 
 `npm run test:live` checks the first 30 Hacker News entries. Requires network access; excluded from CI.
 
-`npm run test:frontend` checks filter selection, keyboard access, and list rendering.
+`npm run test:frontend` checks selection, keyboard access, API states and late responses with mocked fetch.
 
 
 ## Performance
@@ -86,3 +86,7 @@ Local development and tests use PostgreSQL 18. With Docker running, copy `.env.e
 `npm run test:integration` uses disposable PostgreSQL containers and runs in CI. `npm run db:down` stops the local database and preserves its volume.
 
 `UsageRepository.save(event)` waits for persistence and propagates database errors. Callers must await it before returning a successful response.
+
+## UI
+
+The UI loads `all` on startup and requests the selected filter from the API, with loading, empty, error and retry states. Previous requests are cancelled when changing filters.
