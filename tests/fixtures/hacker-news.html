@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Hacker News</title>
+</head>
+
+<body>
+  <!-- Reduced fixture based on the Hacker News front-page structure. Created: 2026-10-04. -->
+  <table id="hnmain">
+    <tbody>
+      <tr>
+        <td>
+          <table>
+            <tbody>
+
+              <!-- Single news entry -->
+              <!-- Submission row: rank and title. The id is the story id, not its rank. -->
+              <tr class="athing submission" id="1001">
+                <td class="title"><span class="rank">1.</span></td>
+                <td class="votelinks"><a href="vote?id=1001">upvote</a></td>
+                <td class="title">
+                  <span class="titleline">
+                    <!-- Title text; &amp; must be decoded to & -->
+                    <a href="https://example.com/rust">Rust &amp; WebAssembly</a>
+                    <!-- Site information is outside the title link and must be excluded. -->
+                    <span class="sitebit comhead">
+                      (<a href="from?site=example.com">example.com</a>)
+                    </span>
+                  </span>
+                </td>
+              </tr>
+              <!-- The next row contains metadata for this submission. -->
+              <tr>
+                <td colspan="2"></td>
+                <td class="subtext">
+                  <span class="subline">
+                    <!-- Numeric score followed by the points label. -->
+                    <span class="score" id="score_1001">120 points</span>
+                    by <a class="hnuser" href="user?id=alice">alice</a>
+                    <!-- Age and comments share the same URL; link text distinguishes them. -->
+                    <span class="age"><a href="item?id=1001">2 hours ago</a></span>
+                    | <a href="hide?id=1001">hide</a> |
+                    <!-- Comment count uses a non-breaking space (&nbsp;) -->
+                    <a href="item?id=1001">35&nbsp;comments</a>
+                  </span>
+                </td>
+              </tr>
+              <!-- Layout-only row between entries. -->
+              <tr class="spacer"></tr>
+
+
+              <!-- Single news entry -->
+              <tr class="athing submission" id="1002">
+                <td class="title"><span class="rank">2.</span></td>
+                <td class="votelinks"><a href="vote?id=1002">upvote</a></td>
+                <td class="title">
+                  <span class="titleline">
+                    <a href="https://example.com/database">A small database</a>
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2"></td>
+                <td class="subtext">
+                  <span class="subline">
+                    <span class="score" id="score_1002">7 points</span>
+                    by <a class="hnuser" href="user?id=bob">bob</a>
+                    <span class="age"><a href="item?id=1002">1 hour ago</a></span>
+                    | <a href="hide?id=1002">hide</a> |
+                    <!-- Singular comment label must also be supported. -->
+                    <a href="item?id=1002">1&nbsp;comment</a>
+                  </span>
+                </td>
+              </tr>
+              <tr class="spacer"></tr>
+
+
+              <!-- Single news entry -->
+              <tr class="athing submission" id="1003">
+                <td class="title"><span class="rank">3.</span></td>
+                <td class="votelinks"><a href="vote?id=1003">upvote</a></td>
+                <td class="title">
+                  <span class="titleline">
+                    <!-- Titles can use internal links and contain Unicode text. -->
+                    <a href="item?id=1003">Show HN: Café tools</a>
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2"></td>
+                <td class="subtext">
+                  <span class="subline">
+                    <!-- Singular point label must also be supported. -->
+                    <span class="score" id="score_1003">1 point</span>
+                    by <a class="hnuser" href="user?id=carol">carol</a>
+                    <span class="age"><a href="item?id=1003">3 minutes ago</a></span>
+                    | <a href="hide?id=1003">hide</a> |
+                    <a href="item?id=1003">12&nbsp;comments</a>
+                  </span>
+                </td>
+              </tr>
+              <tr class="spacer"></tr>
+
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+
+</html>
