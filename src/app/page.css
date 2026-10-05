@@ -45,11 +45,9 @@
       padding-bottom: 28px;
     }
     .news-footer {
-      align-items: flex-start;
+      align-items: center;
       flex-direction: column;
-    }
-    .tech-logos {
-      align-self: flex-end;
+      text-align: center;
     }
   }
 }

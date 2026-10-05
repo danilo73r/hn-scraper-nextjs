@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Entry } from "../entry";
 import { EntryFilter } from "../entry-filter";
 import { EntriesList } from "./entries-list";
@@ -11,14 +11,31 @@ export function EntriesBrowser({
   entries?: readonly Entry[];
 }) {
   const [filter, setFilter] = useState<EntryFilter>(EntryFilter.All);
+  const [isSticky, setIsSticky] = useState(false);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+
+    const updateSticky = () => {
+      setIsSticky(sentinel.getBoundingClientRect().top < 0);
+    };
+    updateSticky();
+    window.addEventListener("scroll", updateSticky, { passive: true });
+    window.addEventListener("resize", updateSticky);
+    return () => {
+      window.removeEventListener("scroll", updateSticky);
+      window.removeEventListener("resize", updateSticky);
+    };
+  }, []);
 
   return (
-    <section
-      aria-label="Browse stories"
-      className="stories-panel overflow-hidden rounded-2xl"
-    >
+    <section aria-label="Browse stories" className="stories-panel rounded-2xl">
+      <div ref={sentinelRef} className="filter-sentinel" aria-hidden="true" />
       <div
-        className="entry-filters flex gap-3"
+        className="entry-filters flex"
+        data-sticky={isSticky}
         role="group"
         aria-label="Title length"
       >
@@ -28,8 +45,8 @@ export function EntriesBrowser({
           aria-pressed={filter === EntryFilter.All}
           onClick={() => setFilter(EntryFilter.All)}
         >
-          <span className="filter-label block text-base">All</span>
-          <small className="filter-description block text-xs text-muted">
+          <span className="filter-label">All</span>
+          <small className="filter-description text-xs text-muted">
             All stories · original order
           </small>
         </button>
@@ -39,8 +56,8 @@ export function EntriesBrowser({
           aria-pressed={filter === EntryFilter.LongTitle}
           onClick={() => setFilter(EntryFilter.LongTitle)}
         >
-          <span className="filter-label block text-base">Long titles</span>
-          <small className="filter-description block text-xs text-muted">
+          <span className="filter-label">Long titles</span>
+          <small className="filter-description text-xs text-muted">
             More than 5 words · by comments
           </small>
         </button>
@@ -50,8 +67,8 @@ export function EntriesBrowser({
           aria-pressed={filter === EntryFilter.ShortTitle}
           onClick={() => setFilter(EntryFilter.ShortTitle)}
         >
-          <span className="filter-label block text-base">Short titles</span>
-          <small className="filter-description block text-xs text-muted">
+          <span className="filter-label">Short titles</span>
+          <small className="filter-description text-xs text-muted">
             5 words or fewer · by points
           </small>
         </button>

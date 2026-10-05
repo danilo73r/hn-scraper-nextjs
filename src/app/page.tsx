@@ -23,13 +23,19 @@ export default function Home() {
         <span>Developed by Danilo A.</span>
         <div
           className="tech-logos flex shrink-0 items-center gap-4"
-          aria-label="Built with Next.js and TypeScript"
+          aria-label="Next.js, TypeScript and Stack Builders"
         >
           <Image src="/next.svg" alt="Next.js" width={72} height={15} />
           <Image
             src="/typescript.svg"
             alt="TypeScript"
             width={26}
+            height={26}
+          />
+          <Image
+            src="/stack-builders.svg"
+            alt="Stack Builders"
+            width={21}
             height={26}
           />
         </div>
