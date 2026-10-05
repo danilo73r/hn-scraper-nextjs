@@ -11,7 +11,13 @@ export default defineConfig({
     environment: "node",
     restoreMocks: true,
     projects: [
-      { test: { name: "unit", include: ["tests/unit/**/*.test.ts"] } },
+      {
+        test: {
+          name: "unit",
+          include: ["tests/unit/**/*.test.ts"],
+          globalSetup: ["tests/setup/parser-fixtures.ts"],
+        },
+      },
       {
         test: {
           name: "integration",
