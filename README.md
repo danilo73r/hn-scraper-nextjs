@@ -24,6 +24,7 @@ PostgreSQL starts first, migrations run automatically, then the app starts.
 
 ### Database
 
+- DB client: host `localhost`, port `5433`; database, user and password from `.env`.
 - Init/update only: `docker compose run --rm --build migrations`.
 - Reset (**deletes the deployment's database**):
     ```bash
