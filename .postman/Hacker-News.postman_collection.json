@@ -1,0 +1,88 @@
+{
+  "info": {
+    "_postman_id": "12fb7a9a-1171-4819-8e3f-dcf7e40cf456",
+    "name": "Hacker-News",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "36675627"
+  },
+  "item": [
+    {
+      "name": "Long Title",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/entries?filter=long-title",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "entries"
+          ],
+          "query": [
+            {
+              "key": "filter",
+              "value": "long-title"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Short Title",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/entries?filter=short-title",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "entries"
+          ],
+          "query": [
+            {
+              "key": "filter",
+              "value": "short-title"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "All",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/entries?filter=all",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "entries"
+          ],
+          "query": [
+            {
+              "key": "filter",
+              "value": "all"
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
