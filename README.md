@@ -15,6 +15,8 @@ A Next.js/Typescript app that scrapes the first 30 entries from Hacker News, fil
 
 ## Filtering
 
+API: `GET /api/entries?filter=long-title|short-title`. Usage is saved before responding; see [API details](docs/api.md).
+
 - Long titles (>5 words): comments descending.
 - Short titles (≤5 words): points descending.
 - Ties: titles A–Z, ignoring case. Complete ties keep the original order.
