@@ -71,21 +71,35 @@ export function EntriesBrowser() {
       </div>
       <div className="stories-heading flex items-center justify-between">
         <h2 className="stories-heading-title text-sm">Stories</h2>
-        {state.status === "ready" && (
+        {"entries" in state && state.entries && (
           <span className="text-xs text-muted">
             {state.entries.length}{" "}
             {state.entries.length === 1 ? "entry" : "entries"}
           </span>
         )}
       </div>
-      <div aria-busy={state.status === "loading"}>
+      <div className="stories-content" aria-busy={state.status === "loading"}>
+        {"entries" in state && state.entries && (
+          <div
+            key={`${filter}-${state.status}`}
+            className="stories-results"
+            data-loading={state.status === "loading"}
+            aria-hidden={state.status === "loading" ? true : undefined}
+            inert={state.status === "loading"}
+          >
+            <EntriesList entries={state.entries} />
+          </div>
+        )}
         {state.status === "loading" && (
-          <p role="status" className="empty-stories text-center text-muted">
+          <p
+            role="status"
+            className="stories-loading empty-stories text-center text-muted"
+          >
             Loading stories…
           </p>
         )}
         {state.status === "error" && (
-          <div className="empty-stories text-center">
+          <div className="stories-message empty-stories text-center">
             <p role="alert" className="text-muted">
               Could not load stories.
             </p>
@@ -98,7 +112,6 @@ export function EntriesBrowser() {
             </button>
           </div>
         )}
-        {state.status === "ready" && <EntriesList entries={state.entries} />}
       </div>
     </section>
   );

@@ -6,7 +6,7 @@ import { EntryFilter } from "../entry-filter";
 import { fetchEntries } from "./entries-client";
 
 type EntriesState =
-  | { status: "loading" }
+  | { status: "loading"; entries?: Entry[] }
   | { status: "error" }
   | { status: "ready"; entries: Entry[] };
 
@@ -31,13 +31,21 @@ export function useEntries() {
 
   function selectFilter(nextFilter: EntryFilter) {
     if (nextFilter === filter) return;
-    setState({ status: "loading" });
+    startLoading();
     setFilter(nextFilter);
   }
 
   function retry() {
-    setState({ status: "loading" });
+    startLoading();
     setRetryCount((count) => count + 1);
+  }
+
+  function startLoading() {
+    // Keep the previous list visible so loading does not collapse the page.
+    setState((current) => ({
+      status: "loading",
+      entries: "entries" in current ? current.entries : undefined,
+    }));
   }
 
   return { filter, selectFilter, state, retry };

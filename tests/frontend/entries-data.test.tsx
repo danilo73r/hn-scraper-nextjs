@@ -55,6 +55,37 @@ describe("entries data", () => {
     expect(await screen.findByText("No stories to show yet.")).toBeVisible();
   });
 
+  it("keeps the previous list in place while the next filter loads", async () => {
+    const user = userEvent.setup();
+    let resolveNext!: (response: Response) => void;
+    fetchMock
+      .mockResolvedValueOnce(Response.json({ entries }))
+      .mockImplementationOnce(
+        () =>
+          new Promise<Response>((resolve) => {
+            resolveNext = resolve;
+          }),
+      );
+    render(<EntriesBrowser />);
+    await screen.findByText("First story");
+    await user.click(screen.getByRole("button", { name: /short titles/i }));
+
+    expect(screen.getByRole("status")).toHaveTextContent("Loading stories");
+    expect(screen.getByText("First story")).toBeInTheDocument();
+    expect(screen.getByRole("list", { hidden: true })).toHaveAttribute(
+      "aria-label",
+      "Stories",
+    );
+    expect(screen.queryByRole("list")).not.toBeInTheDocument();
+
+    await act(async () => {
+      resolveNext(Response.json({ entries: [entries[1]] }));
+    });
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+    expect(screen.queryByText("First story")).not.toBeInTheDocument();
+    expect(screen.getByRole("list")).toBeVisible();
+  });
+
   it.each(["HTTP", "network"])(
     "shows a %s failure and allows retrying",
     async (failure) => {
