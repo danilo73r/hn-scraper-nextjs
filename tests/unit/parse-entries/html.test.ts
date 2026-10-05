@@ -1,5 +1,5 @@
 import { describe, expect, inject, it } from "vitest";
-import { parseEntries } from "@/features/hacker-news/get-entries/scraping/parse-entries";
+import { parseEntries } from "@/features/hacker-news/get-entries/scraping/collect/parse-entries";
 import { ScrapingParseError } from "@/features/hacker-news/get-entries/scraping/scraping-parse-error";
 
 const { html, htmlWithMissingMetrics } = inject("parserFixtures");

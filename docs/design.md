@@ -6,7 +6,7 @@ The architecture is simple but can evolve based on measured performance and iden
 
 - Next.js application, organized by feature with vertical slices.
 - Scraping, caching, filtering, and persistence have separated responsibilities.
-- A background worker (in the same API process) will be used to scrape data from Hacker News.
+- `CollectorWorker` coordinates scraping in the API process. Downloads and waits are asynchronous; a separate thread or process would add complexity.
 
 
 ## Scraping
@@ -25,6 +25,10 @@ The worker performs a scraping operation: it downloads the Hacker News page and 
 ### Cache and Concurrency
 
 - Concurrent requests can only trigger a single scraping operation.
+- The worker shares the active promise across requests, so only one operation runs at a time within the process; no queue is needed.
+- Collector cooldown is fixed at 60s, independently of cache settings. After failure, the error's retry delay applies when available.
+- Cooldowns continue after operation ends; timers run only when an scraping operation or a retry is requested.
+- The operation stays in progress during retry waits; requests reuse its cache or wait for the same operation with their own timeout.
 - Cache expiration and return policy for requests:
     - A. Cache under 60s old:
         - Return cached data. 
@@ -47,6 +51,12 @@ The worker performs a scraping operation: it downloads the Hacker News page and 
     - Parsing errors
 - This state includes an error code to identify the failure.
 - The error state is cleared only after a successful refresh.
+- Retries:
+    - Collection (fetch and parse) makes up to 3 attempts, waiting 60s between retries.
+    - Network failures, download timeouts, and HTTP 500, 502, 503, 504 trigger retries.
+    - Parsing errors and other HTTP errors end collection without retries, except HTTP 429.
+    - HTTP 429 waits for `Retry-After`, bounded between 60s and 1h, or 5min if missing or invalid. Values above 1h are capped, so retries may occur before the server's requested time.
+    - Different error types share the same attempt limit.
 
 
 ## Usage Data

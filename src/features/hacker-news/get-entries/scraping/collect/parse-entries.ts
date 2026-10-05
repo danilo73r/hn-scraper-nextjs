@@ -1,6 +1,6 @@
 import { type CheerioAPI, load } from "cheerio";
-import type { Entry } from "../entry";
-import { ScrapingParseError } from "./scraping-parse-error";
+import type { Entry } from "../../entry";
+import { ScrapingParseError } from "../scraping-parse-error";
 
 type HtmlElement = ReturnType<CheerioAPI>;
 
