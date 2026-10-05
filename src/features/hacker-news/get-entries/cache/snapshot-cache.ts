@@ -4,6 +4,7 @@ import type { EntrySnapshot } from "./entry-snapshot";
 
 export class SnapshotCache {
   private snapshot: EntrySnapshot | null = null;
+  private wordCounts = new Map<string, number>();
 
   constructor(private readonly count: (title: string) => number = countWords) {}
 
@@ -12,16 +13,24 @@ export class SnapshotCache {
   }
 
   replace(entries: readonly Entry[], collectedAt: number = Date.now()): void {
+    const wordCounts = new Map<string, number>();
     const countedEntries = Object.freeze(
-      entries.map((entry) =>
-        Object.freeze({ ...entry, wordCount: this.count(entry.title) }),
-      ),
+      entries.map((entry) => {
+        const wordCount =
+          wordCounts.get(entry.title) ??
+          this.wordCounts.get(entry.title) ??
+          this.count(entry.title);
+        wordCounts.set(entry.title, wordCount);
+        return Object.freeze({ ...entry, wordCount });
+      }),
     );
 
     // Publish only after the entire snapshot has been prepared successfully.
-    this.snapshot = Object.freeze({
+    const snapshot = Object.freeze({
       collectedAt,
       entries: countedEntries,
     });
+    this.wordCounts = wordCounts;
+    this.snapshot = snapshot;
   }
 }
