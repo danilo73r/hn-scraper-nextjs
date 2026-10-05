@@ -11,6 +11,12 @@ import { collectWithRetries } from "@/features/hacker-news/get-entries/scraping/
 import { ScrapingRequestErrorCode } from "@/features/hacker-news/get-entries/scraping/scraping-request-error";
 import { ScrapingParseError } from "@/features/hacker-news/get-entries/scraping/scraping-parse-error";
 
+// Route native promise timers through the clock controlled by vi.useFakeTimers.
+vi.mock("node:timers/promises", () => ({
+  setTimeout: (delayMs: number) =>
+    new Promise<void>((resolve) => setTimeout(resolve, delayMs)),
+}));
+
 const { html } = inject("parserFixtures");
 
 beforeEach(() => vi.useFakeTimers());

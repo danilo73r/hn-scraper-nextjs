@@ -13,6 +13,20 @@ A Next.js/Typescript app that scrapes the first 30 entries from Hacker News, fil
 - The design stays simple and evolves as needs grow, keeping coupling between slices low and favoring CQRS when useful.
 
 
+## Collector worker
+
+`CollectorWorker` is a class in the API process, not a separate Node.js thread; downloads and waits are asynchronous.
+
+The worker shares one active promise across callers, so only one collection runs at a time within the Node.js process. Cooldown is the mandatory pause between collection operations: 60 seconds after success, or the error's retry delay after failure (up to 1 hour for HTTP 429). Cooldown and retry intervals are fixed independently of cache settings. `nextAllowedAt` stores when the next collection may start.
+
+1. A caller requests a collection.
+2. If an operation already exists, the caller shares its promise (`activeCollection`).
+3. If the cooldown has not ended, the operation waits without blocking the thread (`waiting`).
+4. The worker runs collection and its retries (`collecting`).
+5. When it finishes, it clears the active promise and enters `cooldown`, the pause before another collection is allowed.
+6. A failure is stored in `lastError`; a successful collection clears it.
+7. Once the cooldown ends, the worker is `idle`, ready for another request. It does not start a collection automatically.
+
 ## Filtering
 
 - Long titles (>5 words): comments descending.
@@ -30,6 +44,7 @@ A Next.js/Typescript app that scrapes the first 30 entries from Hacker News, fil
 - HTML parsing using saved fixtures: field extraction, missing metrics, comment link positions, and invalid HTML or values.
 - Page fetching: fixed URL, blocked redirects, HTTP/network errors, and timeouts while waiting for headers or the body. Tested with mocked responses and fake timers.
 - Fetch retries: three total attempts, retry delays, mixed failures, and HTTP 429 `Retry-After`. Tested with mocked responses and fake timers.
+- Collector worker: shared concurrent requests, cooldowns, recovery, and no periodic scraping.
 
 ```bash
 npm run test:unit

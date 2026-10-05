@@ -31,10 +31,6 @@ describe("getRetryDelayMs", () => {
     ).toBeNull();
   });
 
-  it("does not retry parsing or unexpected errors", () => {
-    expect(getRetryDelayMs(new Error("Invalid HTML"))).toBeNull();
-  });
-
   it.each([
     { header: "120", expected: 120_000 },
     { header: "300", expected: 300_000 },

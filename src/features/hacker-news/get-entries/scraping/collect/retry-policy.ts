@@ -5,7 +5,7 @@ import {
 import { DateTime } from "luxon";
 
 export const maxCollectionAttempts = 3;
-export const retryIntervalMs = 60_000;
+const retryIntervalMs = 60_000;
 const retryAfterFallbackMs = retryIntervalMs * 5;
 const maxRetryAfterDelayMs = retryIntervalMs * 60;
 const retryableHttpStatuses = new Set([500, 502, 503, 504]);
