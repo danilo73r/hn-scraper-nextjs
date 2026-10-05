@@ -27,6 +27,7 @@ A Next.js/Typescript app that scrapes the first 30 entries from Hacker News, fil
 - Word counting: whitespace, symbols, numbers, and hyphenated words.
 - Filtering: precomputed word counts, the five-word limit, and empty lists.
 - Sorting: descending metrics, titles A–Z ignoring case, and stable ties.
+- HTML parsing using saved fixtures: field extraction, missing metrics, comment link positions, and invalid HTML or values.
 
 ```bash
 npm run test:unit
