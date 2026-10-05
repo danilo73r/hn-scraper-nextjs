@@ -1,26 +1,21 @@
 @import "tailwindcss";
+@import "./page.css";
+@import "../features/hacker-news/get-entries/ui/entries-browser.css";
+@import "../features/hacker-news/get-entries/ui/entries-list.css";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f8f6f1;
+  --foreground: #23221f;
 }
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-muted: #6a645d;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }

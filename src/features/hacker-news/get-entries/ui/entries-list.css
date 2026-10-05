@@ -1,0 +1,33 @@
+@layer components {
+  .empty-stories {
+    padding: 52px 24px 72px;
+  }
+  .story-row {
+    grid-template-columns: 32px 1fr auto;
+    gap: 16px;
+    padding: 22px 28px;
+    border-top: 1px solid #ece8e0;
+  }
+  .story-rank {
+    color: #8a8175;
+    font-size: 13px;
+  }
+  .story-title {
+    font-weight: 550;
+    overflow-wrap: anywhere;
+  }
+  .story-metrics {
+    gap: 16px;
+    white-space: nowrap;
+  }
+  @media (max-width: 600px) {
+    .story-row {
+      grid-template-columns: 24px 1fr;
+      gap: 8px 12px;
+      padding: 20px;
+    }
+    .story-metrics {
+      grid-column: 2;
+    }
+  }
+}
