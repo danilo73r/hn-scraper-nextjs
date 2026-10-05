@@ -15,7 +15,7 @@ describe("fetchPage", () => {
       .mockResolvedValue(new Response(html));
     vi.stubGlobal("fetch", fetchMock);
 
-    const result = await fetchPage(1000);
+    const result = await fetchPage();
 
     expect(result).toBe(html);
     expect(fetchMock).toHaveBeenCalledExactlyOnceWith(
@@ -36,7 +36,7 @@ describe("fetchPage", () => {
         .mockResolvedValue(new Response(null, { status }));
       vi.stubGlobal("fetch", fetchMock);
 
-      await expect(fetchPage(1000)).rejects.toMatchObject({
+      await expect(fetchPage()).rejects.toMatchObject({
         name: "ScrapingRequestError",
         code: ScrapingRequestErrorCode.Http,
         status,
@@ -49,14 +49,14 @@ describe("fetchPage", () => {
     const cause = new TypeError("Connection failed");
     vi.stubGlobal("fetch", vi.fn<typeof fetch>().mockRejectedValue(cause));
 
-    await expect(fetchPage(1000)).rejects.toMatchObject({
+    await expect(fetchPage()).rejects.toMatchObject({
       code: ScrapingRequestErrorCode.Network,
       cause,
     });
   });
 
   it.each(["headers", "body"] as const)(
-    "aborts when waiting for %s exceeds the timeout",
+    "aborts after 10 seconds while waiting for %s",
     async (phase) => {
       vi.useFakeTimers();
       let requestSignal: AbortSignal | undefined;
@@ -85,10 +85,12 @@ describe("fetchPage", () => {
         });
       vi.stubGlobal("fetch", fetchMock);
 
-      const assertion = expect(fetchPage(100)).rejects.toMatchObject({
+      const assertion = expect(fetchPage()).rejects.toMatchObject({
         code: ScrapingRequestErrorCode.Timeout,
       });
-      await vi.advanceTimersByTimeAsync(100);
+      await vi.advanceTimersByTimeAsync(9_999);
+      expect(requestSignal?.aborted).toBe(false);
+      await vi.advanceTimersByTimeAsync(1);
       await assertion;
 
       expect(requestSignal?.aborted).toBe(true);
@@ -104,7 +106,7 @@ describe("fetchPage", () => {
       vi.fn<typeof fetch>().mockResolvedValue(new Response("HTML")),
     );
 
-    await fetchPage(1000);
+    await fetchPage();
 
     expect(vi.getTimerCount()).toBe(0);
   });
@@ -120,20 +122,9 @@ describe("fetchPage", () => {
     );
     vi.stubGlobal("fetch", vi.fn<typeof fetch>().mockResolvedValue(response));
 
-    await expect(fetchPage(1000)).rejects.toMatchObject({
+    await expect(fetchPage()).rejects.toMatchObject({
       code: ScrapingRequestErrorCode.Network,
       cause,
     });
   });
-
-  it.each([0, -1, 1.5, Number.NaN, Number.POSITIVE_INFINITY, 2_147_483_648])(
-    "rejects invalid timeout %s before making a request",
-    async (timeoutMs) => {
-      const fetchMock = vi.fn<typeof fetch>();
-      vi.stubGlobal("fetch", fetchMock);
-
-      await expect(fetchPage(timeoutMs)).rejects.toBeInstanceOf(RangeError);
-      expect(fetchMock).not.toHaveBeenCalled();
-    },
-  );
 });

@@ -25,6 +25,7 @@ The worker performs a scraping operation: it downloads the Hacker News page and 
 ### Cache and Concurrency
 
 - Concurrent requests can only trigger a single scraping operation.
+- The operation stays in progress during retry waits; requests reuse its cache or wait for the same operation with their own timeout.
 - Cache expiration and return policy for requests:
     - A. Cache under 60s old:
         - Return cached data. 
@@ -47,6 +48,12 @@ The worker performs a scraping operation: it downloads the Hacker News page and 
     - Parsing errors
 - This state includes an error code to identify the failure.
 - The error state is cleared only after a successful refresh.
+- Retries:
+    - Collection (fetch and parse) makes up to 3 attempts, waiting 60s between retries.
+    - Network failures, download timeouts, and HTTP 500, 502, 503, 504 trigger retries.
+    - Parsing errors and other HTTP errors end collection without retries, except HTTP 429.
+    - HTTP 429 wait for `Retry-After`, with a minimum of 60s, or 5min if missing or invalid.
+    - Different error types share the same attempt limit.
 
 
 ## Usage Data

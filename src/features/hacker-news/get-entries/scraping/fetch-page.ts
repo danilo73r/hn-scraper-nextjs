@@ -4,19 +4,11 @@ import {
 } from "./scraping-request-error";
 
 const hackerNewsUrl = "https://news.ycombinator.com/";
-const maxFetchTimeoutMs = 60_000;
+const fetchTimeoutMs = 10_000;
 
-export async function fetchPage(timeoutMs: number): Promise<string> {
-  if (
-    !Number.isInteger(timeoutMs) ||
-    timeoutMs <= 0 ||
-    timeoutMs > maxFetchTimeoutMs
-  ) {
-    throw new RangeError(`Fetch timeout between: 1–${maxFetchTimeoutMs} ms`);
-  }
-
+export async function fetchPage(): Promise<string> {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  const timeout = setTimeout(() => controller.abort(), fetchTimeoutMs);
 
   try {
     const response = await fetch(hackerNewsUrl, {
@@ -29,7 +21,10 @@ export async function fetchPage(timeoutMs: number): Promise<string> {
       throw new ScrapingRequestError(
         ScrapingRequestErrorCode.Http,
         `Hacker News returned HTTP ${response.status}.`,
-        { status: response.status },
+        {
+          status: response.status,
+          retryAfter: response.headers.get("retry-after") ?? undefined,
+        },
       );
     }
 
