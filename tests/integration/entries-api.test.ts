@@ -72,10 +72,11 @@ beforeEach(async () => {
 
 describe("GET /api/entries", () => {
   it.each([
+    { filter: "all", ranks: [1, 2, 3, 4] },
     { filter: "short-title", ranks: [2, 1] },
     { filter: "long-title", ranks: [4, 3] },
   ])(
-    "returns sorted $filter entries and saves usage",
+    "returns $filter entries in the expected order and saves usage",
     async ({ filter, ranks }) => {
       const response = await request(filter);
       const body = await response.json();
@@ -87,7 +88,7 @@ describe("GET /api/entries", () => {
             "SELECT filter, result_count, outcome FROM usage_events",
           )
         ).rows,
-      ).toEqual([{ filter, result_count: 2, outcome: "success" }]);
+      ).toEqual([{ filter, result_count: ranks.length, outcome: "success" }]);
     },
   );
 

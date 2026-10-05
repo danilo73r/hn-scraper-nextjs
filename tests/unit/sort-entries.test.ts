@@ -20,6 +20,13 @@ const shortEntry: CountedEntry = {
 };
 
 describe("sortEntries", () => {
+  it("keeps the original order for all, regardless of metrics", () => {
+    const entries = [
+      { ...longEntry, points: 1, comments: 1 },
+      { ...shortEntry, points: 100, comments: 100 },
+    ];
+    expect(sortEntries(entries, EntryFilter.All)).toEqual(entries);
+  });
   it("sorts long titles by comments descending before titles or points", () => {
     const lowCommentsEntry = {
       ...longEntry,

@@ -24,7 +24,7 @@ export async function GET(request: Request): Promise<Response> {
       {
         error: {
           code: "INVALID_FILTER",
-          message: "Use filter=long-title or filter=short-title.",
+          message: "Use filter=all, filter=long-title or filter=short-title.",
         },
       },
       { status: 400, headers },

@@ -1,5 +1,5 @@
 import type { CountedEntry } from "./entry";
-import { type EntryFilter, isLongFilter } from "./entry-filter";
+import { EntryFilter, isLongFilter } from "./entry-filter";
 
 const titleCollator = new Intl.Collator("en", { sensitivity: "accent" });
 
@@ -7,6 +7,7 @@ export function sortEntries(
   entries: readonly CountedEntry[],
   filter: EntryFilter,
 ): CountedEntry[] {
+  if (filter === EntryFilter.All) return [...entries];
   return entries.toSorted((left, right) => {
     const metricDifference = isLongFilter(filter)
       ? right.comments - left.comments

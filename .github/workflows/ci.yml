@@ -47,6 +47,9 @@ jobs:
       - name: Unit tests
         run: npm run test:unit
 
+      - name: Frontend tests
+        run: npm run test:frontend
+
       - name: Integration tests
         run: npm run test:integration
 

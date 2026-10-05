@@ -1,4 +1,5 @@
 export const EntryFilter = {
+  All: "all",
   LongTitle: "long-title",
   ShortTitle: "short-title",
 } as const;
@@ -6,7 +7,11 @@ export const EntryFilter = {
 export type EntryFilter = (typeof EntryFilter)[keyof typeof EntryFilter];
 
 export function isEntryFilter(value: unknown): value is EntryFilter {
-  return value === EntryFilter.LongTitle || value === EntryFilter.ShortTitle;
+  return (
+    value === EntryFilter.All ||
+    value === EntryFilter.LongTitle ||
+    value === EntryFilter.ShortTitle
+  );
 }
 
 export function isLongFilter(filter: EntryFilter): boolean {
