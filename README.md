@@ -31,3 +31,16 @@ A Next.js/Typescript app that scrapes the first 30 entries from Hacker News, fil
 ```bash
 npm run test:unit
 ```
+
+## Performance
+
+### Parsing benchmark
+
+- Points and Comments share similar text patten in the fixtures. 
+- This benchmark compares parse algorithms, the best is choice of `split`.
+- Cheerio decodes `&nbsp;` as \u00A0; the parser handles both separators.
+
+```bash
+node scripts/parser/benchmark-parsing.mjs
+node scripts/parser/named-character-references.mjs
+```
