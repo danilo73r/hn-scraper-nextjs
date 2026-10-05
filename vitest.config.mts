@@ -1,7 +1,9 @@
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitest/config";
+import react from "@vitejs/plugin-react";
 
 export default defineConfig({
+  plugins: [react()],
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
@@ -11,6 +13,15 @@ export default defineConfig({
     environment: "node",
     restoreMocks: true,
     projects: [
+      {
+        extends: true,
+        test: {
+          name: "frontend",
+          environment: "jsdom",
+          include: ["tests/frontend/**/*.test.tsx"],
+          setupFiles: ["tests/setup/react.ts"],
+        },
+      },
       {
         test: {
           name: "unit",
