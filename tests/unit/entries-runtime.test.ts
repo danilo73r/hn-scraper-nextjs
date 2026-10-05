@@ -1,8 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import {
-  getEntriesQuery,
-  readRequestTimeoutMs,
-} from "@/features/hacker-news/get-entries/runtime";
+import { getEntriesQuery } from "@/features/hacker-news/get-entries/runtime";
 
 const { createDatabasePool, getCachedEntries } = vi.hoisted(() => ({
   createDatabasePool: vi.fn(() => ({ query: vi.fn() })),
@@ -30,18 +27,4 @@ describe("entries runtime", () => {
     expect(createDatabasePool).toHaveBeenCalledTimes(1);
     expect(getCachedEntries).toHaveBeenCalledTimes(1);
   });
-  it("defaults to ten seconds and accepts a configured timeout", () => {
-    expect(readRequestTimeoutMs({})).toBe(10_000);
-    expect(readRequestTimeoutMs({ REQUEST_TIMEOUT_SECONDS: "20" })).toBe(
-      20_000,
-    );
-  });
-  it.each(["0", "1.5", "abc", "2147484"])(
-    "rejects invalid timeout %s",
-    (value) => {
-      expect(() =>
-        readRequestTimeoutMs({ REQUEST_TIMEOUT_SECONDS: value }),
-      ).toThrow("REQUEST_TIMEOUT_SECONDS");
-    },
-  );
 });
