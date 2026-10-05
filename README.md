@@ -3,6 +3,41 @@
 A Next.js/Typescript app that scrapes the first 30 entries from Hacker News, filters them by title word count, and store usage data in PostgreSQL.
 
 
+## Instructions - Docker deployment
+
+Run these steps from `nextjs/`, with Docker running.
+Node.js is not required on the host.
+
+### Start
+
+PostgreSQL starts first, migrations run automatically, then the app starts.
+
+1. Copy `.env.example` to `.env` (once).
+2. Build and start:
+
+   ```bash
+   docker compose up -d --build
+   ```
+
+3. Open http://localhost:3000. If the port is busy, change `APP_PORT` in `.env` and use that port.
+
+
+### Database
+
+- Init/update only: `docker compose run --rm --build migrations`.
+- Reset (**deletes the deployment's database**):
+    ```bash
+    docker compose down -v
+    docker compose up -d --build
+    ```
+- Development and test databases are separate and unaffected by this reset.
+
+### Build and stop
+
+- Build only: `docker compose build`.
+- Stop: `docker compose down` (preserves data).
+
+
 ## Architecture
 
 - The application follows [Jimmy Bogard's Vertical Slice Architecture](https://www.jimmybogard.com/vertical-slice-architecture/) approach, grouping related code by use case.

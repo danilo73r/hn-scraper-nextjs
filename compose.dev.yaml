@@ -1,0 +1,12 @@
+name: nextjs
+
+services:
+  postgres:
+    extends:
+      file: compose.postgres.yaml
+      service: postgres
+    ports:
+      - "127.0.0.1:5432:5432"
+
+volumes:
+  postgres18_data:

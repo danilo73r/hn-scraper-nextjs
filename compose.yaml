@@ -1,19 +1,47 @@
+name: hn-crawler-docker
+
 services:
   postgres:
-    image: postgres:18-alpine
+    extends:
+      file: compose.postgres.yaml
+      service: postgres
+
+  migrations:
+    build:
+      context: .
+      target: migrations
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-hn_crawler}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-hn_crawler}
-      POSTGRES_DB: ${POSTGRES_DB:-hn_crawler}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  app:
+    build:
+      context: .
+      target: app
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      CACHE_FRESH_SECONDS: ${CACHE_FRESH_SECONDS}
+      CACHE_MAX_AGE_SECONDS: ${CACHE_MAX_AGE_SECONDS}
+      REQUEST_TIMEOUT_SECONDS: ${REQUEST_TIMEOUT_SECONDS}
     ports:
-      - "127.0.0.1:5432:5432"
-    volumes:
-      - postgres18_data:/var/lib/postgresql
+      - "127.0.0.1:${APP_PORT}:3000"
+    depends_on:
+      migrations:
+        condition: service_completed_successfully
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
-      interval: 2s
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))",
+        ]
+      interval: 5s
       timeout: 5s
-      retries: 15
+      start_period: 10s
+      retries: 12
 
 volumes:
   postgres18_data:
